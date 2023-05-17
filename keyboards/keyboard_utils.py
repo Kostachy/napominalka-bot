@@ -2,7 +2,7 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardBut
 
 # Создаем объекты кнопок
 today_button: KeyboardButton = KeyboardButton(text='Узнать дату на сегодня')
-set_tasks_button: KeyboardButton = KeyboardButton(text='Записать список задач на день')
+set_tasks_button: KeyboardButton = KeyboardButton(text='Записать напоминалку')
 delete_task_button: KeyboardButton = KeyboardButton(text='Удалить задачу')
 set_day_button: KeyboardButton = KeyboardButton(text='Задать дату')
 delete_day_button: KeyboardButton = KeyboardButton(text='Удалить дату')
@@ -24,8 +24,16 @@ big_button_2: InlineKeyboardButton = InlineKeyboardButton(
     text='БОЛЬШАЯ КНОПКА 2',
     callback_data='big_button_2_pressed')
 
-# Создаем объект инлайн-клавиатуры
-inline_keyboard: InlineKeyboardMarkup = InlineKeyboardMarkup(
-    inline_keyboard=[[big_button_1],
-                     [big_button_2]])
+task_button: InlineKeyboardButton = InlineKeyboardButton(text='Запишите задачи',
+                                                         callback_data='task_button_pressed')
 
+time_button: InlineKeyboardButton = InlineKeyboardButton(text='Задайте время упоминания',
+                                                         callback_data='time_button_pressed')
+
+finish_task_button: InlineKeyboardButton = InlineKeyboardButton(text='Завершить запись задач',
+                                                                callback_data='finish_task_button_pressed')
+
+# Создаем объект инлайн-клавиатуры
+inline_keyboard_1: InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard=[[task_button]])
+inline_keyboard_2: InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard=[[finish_task_button]])
+inline_keyboard_3: InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard=[[time_button]])
