@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher
 from config_data.config import Config, load_config
 from handlers import user_handlers
 from keyboards.set_menu import set_main_menu
+from aiogram.fsm.storage.memory import MemoryStorage
 
 
 async def main():
@@ -14,7 +15,8 @@ async def main():
 
     # Инициализируем бот и диспетчер
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
-    dp: Dispatcher = Dispatcher()
+    storage: MemoryStorage = MemoryStorage()
+    dp: Dispatcher = Dispatcher(storage=storage)
 
     dp.include_router(user_handlers.router)
 

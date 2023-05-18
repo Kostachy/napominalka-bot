@@ -24,10 +24,10 @@ big_button_2: InlineKeyboardButton = InlineKeyboardButton(
     text='БОЛЬШАЯ КНОПКА 2',
     callback_data='big_button_2_pressed')
 
-task_button: InlineKeyboardButton = InlineKeyboardButton(text='Запишите задачи',
+task_button: InlineKeyboardButton = InlineKeyboardButton(text='Записать задачи',
                                                          callback_data='task_button_pressed')
 
-time_button: InlineKeyboardButton = InlineKeyboardButton(text='Задайте время упоминания',
+time_button: InlineKeyboardButton = InlineKeyboardButton(text='Задать время упоминания',
                                                          callback_data='time_button_pressed')
 
 finish_task_button: InlineKeyboardButton = InlineKeyboardButton(text='Завершить запись задач',
