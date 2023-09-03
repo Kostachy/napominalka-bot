@@ -2,25 +2,15 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from config_data.config import Config, load_config
-from handlers import user_handlers
-from keyboards.set_menu import set_main_menu
-from aiogram.fsm.storage.memory import MemoryStorage
+from config import settings
 
 
 async def main():
     logging.basicConfig(level=logging.INFO)
-    # Загружаем конфиг в переменную config
-    config: Config = load_config()
-
+    dp = Dispatcher()
     # Инициализируем бот и диспетчер
-    bot: Bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
-    storage: MemoryStorage = MemoryStorage()
-    dp: Dispatcher = Dispatcher(storage=storage)
+    bot: Bot = Bot(token=settings.BOT_TOKEN, parse_mode='HTML')
 
-    dp.include_router(user_handlers.router)
-
-    await set_main_menu(bot)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
