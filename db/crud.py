@@ -1,7 +1,7 @@
 from sqlalchemy import delete, insert, select, update
 
 from db.database import async_session_maker
-from db.models.model import Users
+from db.models.base_model import Users
 
 
 class UserCRUD:

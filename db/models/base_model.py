@@ -15,7 +15,7 @@ class Users(Base):
     username: Mapped[str] = mapped_column(String, nullable=False)
 
     def __repr__(self):
-        return "<id={}, user_id={}, username={}>".format(self.id, self.user_id, self.username)
+        return "id={}, user_id={}, username={}".format(self.id, self.user_id, self.username)
 
 
 
