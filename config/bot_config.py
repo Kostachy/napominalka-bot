@@ -1,20 +1,36 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
-import dataclasses
+from dataclasses import dataclass
+from environs import Env
 
 
-class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
-    BOT_TOKEN: str
-
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
-
-    @property
-    def DATABASE_URL(self):
-        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+@dataclass
+class TgBot:
+    token: str
 
 
-settings = Settings()
+@dataclass
+class PostgresConfig:
+    db_host: str
+    db_port: int
+    db_user: str
+    db_pass: str
+    db_name: str
+
+
+@dataclass
+class Config:
+    tg_bot: TgBot
+    postgres: PostgresConfig
+
+
+def load_config(path: str | None = None) -> Config:
+    env = Env()
+    env.read_env(path)
+    return Config(tg_bot=TgBot(token=env('BOT_TOKEN')),
+                  postgres=PostgresConfig(db_name=env('DB_NAME'),
+                                          db_host=env("DB_HOST"),
+                                          db_port=env("DB_PORT"),
+                                          db_user=env("DB_USER"),
+                                          db_pass=env("DB_PASS")))
+
+
+config: Config = load_config()
