@@ -1,25 +1,24 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 from aiogram3_calendar import simple_cal_callback, SimpleCalendar
+
+from middlewares.mid_for_scheduler import SchedulerMiddleware
+from utils import FSMfill
 
 from utils.keybords.user_keybord import default_keybord
 from utils.lexicon import START_DESCRIPTION, HELP_DESCRIPTION
 
 from db.crud import UserCRUD
 
+from sheduler import sched
+
 user_router = Router()
-
-
-class FSMfill(StatesGroup):
-    choosing_date = State()
-    choosing_time = State()
-    choosing_task = State()
+user_router.message.middleware(SchedulerMiddleware(sched))
 
 
 @user_router.message(CommandStart())
@@ -65,6 +64,12 @@ async def chose_date(callback_query: CallbackQuery, callback_data: dict, state: 
     if selected:
         await callback_query.message.answer(
             f'Вы выбрали {selected_date.strftime("%d/%m/%Y")}\nТеперь укажите время в формате HH:MM')
+        selected_date = str(selected_date).split('-')
+        print(selected_date)
+        other = selected_date[-1].split()
+        selected_date.pop(-1)
+        selected_date.insert(2, other[0])
+        selected_date = [int(i) for i in selected_date]
         await state.update_data(selected_date=selected_date)
         await state.set_state(FSMfill.choosing_time)
 
@@ -73,6 +78,7 @@ async def chose_date(callback_query: CallbackQuery, callback_data: dict, state: 
 async def chose_time(message: Message, state: FSMContext):
     selected_time = [int(i) for i in message.text.split(':')]
     await state.update_data(selected_time=selected_time)
+    # rework
     if selected_time[0] > 23 or selected_time[1] > 59:
         await message.answer('Вы указали неверное время\nПожалуйста запишите его в формате HH:MM')
     else:
@@ -85,19 +91,24 @@ async def cancel_cal_time(message: Message):
     await message.answer('idi naxui')
 
 
-@user_router.message(F.text)
-async def write_text_napomninalki(message: Message, state: FSMContext):
+@user_router.message(FSMfill.choosing_task, F.text)
+async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot):
     await state.update_data(tasks=message.text)
     user_data = await state.get_data()
-    await message.answer(f'{user_data["selected_date"]}---{user_data["selected_time"]}----{user_data["tasks"]}')
+    print(user_data['selected_date'])
+    print(user_data['selected_time'])
+    time_for_sheduler = datetime(year=user_data['selected_date'][0],
+                                 month=user_data['selected_date'][1],
+                                 day=user_data['selected_date'][2]) + timedelta(hours=user_data['selected_time'][0],
+                                                                                minutes=user_data['selected_time'][1])
+    print(time_for_sheduler)
+    sched.add_job(func=bot.send_message(text=user_data['tasks'],
+                                        chat_id=message.from_user.id),
+                  trigger='date',
+                  run_date=time_for_sheduler)
     await message.answer(
         'Поздравляю!\nНапоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время')
     await state.clear()
-
-
-@user_router.message(FSMfill.choosing_task)
-async def cancel_cal_time(message: Message):
-    await message.answer('idi naxui 2')
 
 
 @user_router.message()

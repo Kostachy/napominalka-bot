@@ -3,7 +3,7 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage, Redis
-
+from sheduler import sched
 
 from config.bot_config import config
 from handlers.user_handlers import user_router
@@ -14,7 +14,6 @@ async def main():
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     )
-
     redis: Redis = Redis(host=config.redis_db.redis_host,
                          port=config.redis_db.redis_port,
                          password=config.redis_db.redis_pass)

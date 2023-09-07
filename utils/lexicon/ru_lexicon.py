@@ -1,6 +1,7 @@
 LEXICON_COMMANDS_RU: dict[str, str] = {
                 '/start': 'Запуск бота',
-                '/help': 'Справка по работе бота'}
+                '/help': 'Справка по работе бота',
+                '/cancel': 'Отмена действия'}
 
 
 START_DESCRIPTION = '''Нажмите на кнопки из меню'''
