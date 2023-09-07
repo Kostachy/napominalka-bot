@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta
+from typing import Union
 
 from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart
@@ -7,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram3_calendar import simple_cal_callback, SimpleCalendar
 
-from middlewares.mid_for_scheduler import SchedulerMiddleware
+# from middlewares.mid_for_scheduler import SchedulerMiddleware
 from utils import FSMfill
 
 from utils.keybords.user_keybord import default_keybord
@@ -18,7 +19,11 @@ from db.crud import UserCRUD
 from sheduler import sched
 
 user_router = Router()
-user_router.message.middleware(SchedulerMiddleware(sched))
+
+
+async def send_some_message(bot: Bot, message: str, chat_id: Union[int, str]):
+    await bot.send_message(text='⏰НАПОМИНАЛКА⏰', chat_id=chat_id)
+    await bot.send_message(text=message, chat_id=chat_id)
 
 
 @user_router.message(CommandStart())
@@ -102,12 +107,13 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
                                  day=user_data['selected_date'][2]) + timedelta(hours=user_data['selected_time'][0],
                                                                                 minutes=user_data['selected_time'][1])
     print(time_for_sheduler)
-    sched.add_job(func=bot.send_message(text=user_data['tasks'],
-                                        chat_id=message.from_user.id),
+    sched.add_job(func=send_some_message,
                   trigger='date',
-                  run_date=time_for_sheduler)
+                  run_date=datetime.now() + timedelta(seconds=10),
+                  kwargs={'bot': bot, 'message': user_data['tasks'], 'chat_id': message.from_user.id})
+    print(sched.get_jobs())
     await message.answer(
-        'Поздравляю!\nНапоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время')
+        'Напоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время')
     await state.clear()
 
 
