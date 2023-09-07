@@ -30,7 +30,6 @@ async def send_some_message(bot: Bot, message: str, chat_id: Union[int, str]):
 async def get_started(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(START_DESCRIPTION, reply_markup=default_keybord)
-    print(await UserCRUD.read_user(message.from_user.id))
     if not await UserCRUD.read_user(message.from_user.id):
         await UserCRUD.create_user(user_id=message.from_user.id, username=message.from_user.username)
 
@@ -70,7 +69,6 @@ async def chose_date(callback_query: CallbackQuery, callback_data: dict, state: 
         await callback_query.message.answer(
             f'Вы выбрали {selected_date.strftime("%d/%m/%Y")}\nТеперь укажите время в формате HH:MM')
         selected_date = str(selected_date).split('-')
-        print(selected_date)
         other = selected_date[-1].split()
         selected_date.pop(-1)
         selected_date.insert(2, other[0])
@@ -93,7 +91,7 @@ async def chose_time(message: Message, state: FSMContext):
 
 @user_router.message(FSMfill.choosing_time)
 async def cancel_cal_time(message: Message):
-    await message.answer('idi naxui')
+    await message.answer('Пожалуйста запишите время в формате HH:MM')
 
 
 @user_router.message(FSMfill.choosing_task, F.text)
@@ -106,10 +104,10 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
                                  month=user_data['selected_date'][1],
                                  day=user_data['selected_date'][2]) + timedelta(hours=user_data['selected_time'][0],
                                                                                 minutes=user_data['selected_time'][1])
-    print(time_for_sheduler)
+
     sched.add_job(func=send_some_message,
                   trigger='date',
-                  run_date=datetime.now() + timedelta(seconds=10),
+                  run_date=time_for_sheduler,
                   kwargs={'bot': bot, 'message': user_data['tasks'], 'chat_id': message.from_user.id})
     print(sched.get_jobs())
     await message.answer(
@@ -119,4 +117,4 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
 
 @user_router.message()
 async def other_messages(message: Message):
-    await message.answer("Выберите кнопку из меню")
+    await message.answer("Выберите кнопку из меню", reply_markup=default_keybord)

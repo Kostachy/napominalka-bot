@@ -30,7 +30,7 @@ class UserCRUD:
     @classmethod
     async def delete_user(cls, **filter_by):
         async with async_session_maker() as session:
-            query = update(Users).filter_by(**filter_by)
+            query = delete(Users).filter_by(**filter_by)
             await session.execute(query)
             await session.commit()
 
