@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram3_calendar import simple_cal_callback, SimpleCalendar
 
-# from middlewares.mid_for_scheduler import SchedulerMiddlewaredsfdsfsdfsd
+# from middlewares.mid_for_scheduler import SchedulerMiddlewaredsfdsfsdfsdsdfdsfds
 from utils import FSMfill
 
 from utils.keybords.user_keybord import default_keybord
