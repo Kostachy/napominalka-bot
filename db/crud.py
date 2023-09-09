@@ -4,12 +4,13 @@ from db.database import async_session_maker
 from db.models.base_model import Users
 
 
-class UserCRUD:
+class BaseCRUD:
+    model = None
 
     @classmethod
-    async def create_user(cls, **data):
+    async def add(cls, **data):
         async with async_session_maker() as session:
-            query = insert(Users).values(**data)
+            query = insert(cls.model).values(**data)
             await session.execute(query)
             await session.commit()
 
@@ -23,14 +24,14 @@ class UserCRUD:
     @classmethod
     async def update_user(cls, **data):
         async with async_session_maker() as session:
-            query = update(Users).filter_by(**data)
+            query = update(cls.model).filter_by(**data)
             await session.execute(query)
             await session.commit()
 
     @classmethod
     async def delete_user(cls, **filter_by):
         async with async_session_maker() as session:
-            query = delete(Users).filter_by(**filter_by)
+            query = delete(cls.model).filter_by(**filter_by)
             await session.execute(query)
             await session.commit()
 

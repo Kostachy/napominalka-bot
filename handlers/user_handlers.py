@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time, date
 from typing import Union
 
 from aiogram import Router, F, Bot
@@ -14,7 +14,8 @@ from utils import FSMfill
 from utils.keybords.user_keybord import default_keybord
 from utils.lexicon import START_DESCRIPTION, HELP_DESCRIPTION
 
-from db.crud import UserCRUD
+from db.crud import BaseCRUD
+from db.datetime_crud import TimeCRUD, DateCRUD
 
 from sheduler import sched
 
@@ -28,10 +29,11 @@ async def send_some_message(bot: Bot, message: str, chat_id: Union[int, str]):
 
 @user_router.message(CommandStart())
 async def get_started(message: Message, state: FSMContext):
+    print(message.from_user.id)
     await state.clear()
     await message.answer(START_DESCRIPTION, reply_markup=default_keybord)
-    if not await UserCRUD.read_user(message.from_user.id):
-        await UserCRUD.create_user(user_id=message.from_user.id, username=message.from_user.username)
+    if not await BaseCRUD.read_user(message.from_user.id):
+        await BaseCRUD.add(user_id=message.from_user.id, username=message.from_user.username)
 
 
 @user_router.message(Command('help'))
@@ -100,6 +102,18 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
     user_data = await state.get_data()
     print(user_data['selected_date'])
     print(user_data['selected_time'])
+
+    schedule_date = date(year=user_data['selected_date'][0],
+                         month=user_data['selected_date'][1],
+                         day=user_data['selected_date'][2])
+
+    schedule_time = time(hour=user_data['selected_time'][0],
+                         minute=user_data['selected_time'][1])
+    print(schedule_date)
+    print(schedule_time)
+    await DateCRUD.add(schedule_date=schedule_date, user_id=message.from_user.id)
+    await TimeCRUD.add(schedule_time=schedule_time)
+
     time_for_sheduler = datetime(year=user_data['selected_date'][0],
                                  month=user_data['selected_date'][1],
                                  day=user_data['selected_date'][2]) + timedelta(hours=user_data['selected_time'][0],
