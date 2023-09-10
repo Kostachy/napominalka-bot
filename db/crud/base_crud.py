@@ -15,9 +15,9 @@ class BaseCRUD:
             await session.commit()
 
     @classmethod
-    async def read_user(cls, user_id: int):
+    async def read(cls, **filter_by):
         async with async_session_maker() as session:
-            query = select(Users.user_id).filter_by(user_id=user_id)
+            query = select(cls.model).filter_by(**filter_by)
             result = await session.execute(query)
             return result.one_or_none()
 
@@ -34,10 +34,3 @@ class BaseCRUD:
             query = delete(cls.model).filter_by(**filter_by)
             await session.execute(query)
             await session.commit()
-
-    @classmethod
-    async def get_all_by_user_id(cls):
-        async with async_session_maker() as session:
-            query = select(Users.user_id)
-            result = await session.execute(query)
-            return result.all()

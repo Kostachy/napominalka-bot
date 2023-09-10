@@ -7,7 +7,7 @@ from alembic import context
 
 from db.database import Base, DATABASE_URL
 from db.models.base_model import Users
-from db.models.date_time_model import SchDate, SchTime
+from db.models.datetime_model import ScheduleDateTime
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
