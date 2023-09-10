@@ -1,5 +1,4 @@
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 
 from db.database import Base
@@ -8,9 +7,10 @@ from db.database import Base
 class Users(Base):
     __tablename__ = "user"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    username: Mapped[str] = mapped_column(String)
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(nullable=False)
+
+    schedule_datetime = relationship('ScheduleDateTime', back_populates="user")
 
     def __repr__(self):
-        return "id={}, user_id={}, username={}".format(self.id, self.user_id, self.username)
+        return "user_id={}, username={}".format(self.user_id, self.username)

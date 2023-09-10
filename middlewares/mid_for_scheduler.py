@@ -1,6 +1,5 @@
 from typing import Dict, Any, Callable, Awaitable
 from aiogram import BaseMiddleware
-from aiogram.types.base import TelegramObject
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 

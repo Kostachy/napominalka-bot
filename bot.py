@@ -3,10 +3,11 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage, Redis
+
 from sheduler import sched
 
 from config.bot_config import config
-from handlers.user_handlers import user_router
+from handlers.user_handlers_add import user_router
 
 
 async def main():
