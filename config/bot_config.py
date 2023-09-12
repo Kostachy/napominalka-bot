@@ -24,10 +24,20 @@ class RedisConfig:
 
 
 @dataclass
+class WebhookConfig:
+    WEB_SERVER_HOST: str
+    WEB_SERVER_PORT: int
+    WEBHOOK_PATH: str
+    WEBHOOK_SECRET: str
+    BASE_WEBHOOK_URL: str
+
+
+@dataclass
 class Config:
     tg_bot: TgBot
     postgres: PostgresConfig
     redis_db: RedisConfig
+    webhook_config: WebhookConfig
 
 
 def load_config(path: str | None = None) -> Config:
@@ -41,7 +51,12 @@ def load_config(path: str | None = None) -> Config:
                                           db_pass=env("DB_PASS")),
                   redis_db=RedisConfig(redis_host=env('REDIS_HOST'),
                                        redis_pass=env('REDIS_PASS'),
-                                       redis_port=env('REDIS_PORT')))
+                                       redis_port=env('REDIS_PORT')),
+                  webhook_config=WebhookConfig(WEB_SERVER_HOST=env('WEB_SERVER_HOST'),
+                                               WEB_SERVER_PORT=env('WEB_SERVER_PORT'),
+                                               WEBHOOK_PATH=env('WEBHOOK_PATH'),
+                                               WEBHOOK_SECRET=env('WEBHOOK_SECRET'),
+                                               BASE_WEBHOOK_URL=env('BASE_WEBHOOK_URL')))
 
 
 config: Config = load_config()
