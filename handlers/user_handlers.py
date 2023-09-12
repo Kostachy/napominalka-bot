@@ -10,14 +10,15 @@ from aiogram3_calendar import simple_cal_callback, SimpleCalendar
 
 from db.crud import UserCRUD, DatetimeCRUD
 # from middlewares.mid_for_scheduler import SchedulerMiddleware
-from utils import FSMfill, FSMfillToDelete
+from utils import FSMfill
 
-from utils.keybords.user_keybord import default_keybord, first_keyboard
+from utils.keybords.user_keybord import default_keybord
 from utils.lexicon import START_DESCRIPTION, HELP_DESCRIPTION
 
 from sheduler import sched
 
 user_router = Router()
+
 
 async def send_some_message(bot: Bot, message: str, chat_id: Union[int, str]):
     await bot.send_message(text='⏰НАПОМИНАЛКА⏰', chat_id=chat_id)
@@ -106,7 +107,7 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
                                                 run_date=time_for_sheduler,
                                                 kwargs={'bot': bot, 'message': user_data['tasks'],
                                                         'chat_id': message.from_user.id}).id)
-
+    print(sched.get_jobs())
     await message.answer(
         'Напоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время')
     await state.clear()
