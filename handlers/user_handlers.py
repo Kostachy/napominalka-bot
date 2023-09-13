@@ -107,7 +107,6 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
                                                 run_date=time_for_sheduler,
                                                 kwargs={'bot': bot, 'message': user_data['tasks'],
                                                         'chat_id': message.from_user.id}).id)
-    print(sched.get_jobs())
     await message.answer(
         'Напоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время')
     await state.clear()

@@ -36,7 +36,6 @@ async def main():
     dp = Dispatcher(storage=RedisStorage(redis=redis))
     dp.include_router(user_router)
     sched.start()
-
     await dp.start_polling(bot)
     # webhook_requests_handler = SimpleRequestHandler(
     #     dispatcher=dp,

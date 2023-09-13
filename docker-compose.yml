@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15
+    container_name: bot_db
+    env_file:
+      - .env
+    restart: always
+
+  redis:
+    image: redis:7
+    container_name: bot_redis
+    restart: always
+
+  napominalka_bot:
+    build:
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    command: [ "python", "bot.py" ]
+    restart: always
