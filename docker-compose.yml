@@ -1,11 +1,13 @@
 version: '3'
 
+volumes:
+  postgresql_volume:
+
 services:
   db:
     image: postgres:15
     container_name: bot_db
-    env_file:
-      - .env
+    env_file: .env
     restart: always
 
   redis:
@@ -21,5 +23,6 @@ services:
     depends_on:
       - db
       - redis
-    command: [ "python", "bot.py" ]
+    command: [ "/napominalka_bot/docker/app.sh" ]
     restart: always
+
