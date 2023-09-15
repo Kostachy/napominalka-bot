@@ -25,6 +25,7 @@ class RedisConfig:
 
 @dataclass
 class WebhookConfig:
+    USE_WEBHOOK: bool
     WEB_SERVER_HOST: str
     WEB_SERVER_PORT: int
     WEBHOOK_PATH: str
@@ -52,7 +53,8 @@ def load_config(path: str | None = None) -> Config:
                   redis_db=RedisConfig(redis_host=env('REDIS_HOST'),
                                        redis_pass=env('REDIS_PASS'),
                                        redis_port=env('REDIS_PORT')),
-                  webhook_config=WebhookConfig(WEB_SERVER_HOST=env('WEB_SERVER_HOST'),
+                  webhook_config=WebhookConfig(USE_WEBHOOK=env('USE_WEBHOOK'),
+                                               WEB_SERVER_HOST=env('WEB_SERVER_PORT'),
                                                WEB_SERVER_PORT=env('WEB_SERVER_PORT'),
                                                WEBHOOK_PATH=env('WEBHOOK_PATH'),
                                                WEBHOOK_SECRET=env('WEBHOOK_SECRET'),
