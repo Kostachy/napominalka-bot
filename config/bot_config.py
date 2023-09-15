@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from environs import Env
 
 
@@ -44,21 +45,29 @@ class Config:
 def load_config(path: str | None = None) -> Config:
     env = Env()
     env.read_env(path)
-    return Config(tg_bot=TgBot(token=env('BOT_TOKEN')),
-                  postgres=PostgresConfig(db_name=env('DB_NAME'),
-                                          db_host=env("DB_HOST"),
-                                          db_port=env("DB_PORT"),
-                                          db_user=env("DB_USER"),
-                                          db_pass=env("DB_PASS")),
-                  redis_db=RedisConfig(redis_host=env('REDIS_HOST'),
-                                       redis_pass=env('REDIS_PASS'),
-                                       redis_port=env('REDIS_PORT')),
-                  webhook_config=WebhookConfig(USE_WEBHOOK=env('USE_WEBHOOK'),
-                                               WEB_SERVER_HOST=env('WEB_SERVER_PORT'),
-                                               WEB_SERVER_PORT=env('WEB_SERVER_PORT'),
-                                               WEBHOOK_PATH=env('WEBHOOK_PATH'),
-                                               WEBHOOK_SECRET=env('WEBHOOK_SECRET'),
-                                               BASE_WEBHOOK_URL=env('BASE_WEBHOOK_URL')))
+    return Config(
+        tg_bot=TgBot(token=env("BOT_TOKEN")),
+        postgres=PostgresConfig(
+            db_name=env("DB_NAME"),
+            db_host=env("DB_HOST"),
+            db_port=env("DB_PORT"),
+            db_user=env("DB_USER"),
+            db_pass=env("DB_PASS"),
+        ),
+        redis_db=RedisConfig(
+            redis_host=env("REDIS_HOST"),
+            redis_pass=env("REDIS_PASS"),
+            redis_port=env("REDIS_PORT"),
+        ),
+        webhook_config=WebhookConfig(
+            USE_WEBHOOK=env("USE_WEBHOOK"),
+            WEB_SERVER_HOST=env("WEB_SERVER_PORT"),
+            WEB_SERVER_PORT=env("WEB_SERVER_PORT"),
+            WEBHOOK_PATH=env("WEBHOOK_PATH"),
+            WEBHOOK_SECRET=env("WEBHOOK_SECRET"),
+            BASE_WEBHOOK_URL=env("BASE_WEBHOOK_URL"),
+        ),
+    )
 
 
 config: Config = load_config()

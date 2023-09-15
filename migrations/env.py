@@ -1,11 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
+from sqlalchemy import engine_from_config, pool
 
-from db.database import Base, DATABASE_URL
+from db.database import DATABASE_URL, Base
 from db.models.base_model import Users
 from db.models.datetime_model import ScheduleDateTime
 

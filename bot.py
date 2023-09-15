@@ -1,18 +1,15 @@
 import asyncio
 import logging
 
-
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
-from aiogram.fsm.storage.redis import RedisStorage, Redis
-from aiohttp import web
-
+from aiogram.fsm.storage.redis import Redis, RedisStorage
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
-
-from sheduler import sched
+from aiohttp import web
 
 from config.bot_config import config
 from handlers.user_handlers import user_router
+from sheduler import sched
 
 logger = logging.getLogger(__name__)
 

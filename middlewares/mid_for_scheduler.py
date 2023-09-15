@@ -1,4 +1,5 @@
-from typing import Dict, Any, Callable, Awaitable
+from typing import Any, Awaitable, Callable, Dict
+
 from aiogram import BaseMiddleware
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler

@@ -1,4 +1,9 @@
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+)
 
 set_tasks_button: KeyboardButton = KeyboardButton(text='Записать напоминалку')
 # delete_task_button: KeyboardButton = KeyboardButton(text='Удалить напоминалку')
