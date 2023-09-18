@@ -45,7 +45,7 @@ async def get_helped(message: Message, state: FSMContext):
 @user_router.message(F.text.lower() == "отмена")
 async def cmd_cancel(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer(text="Действие отменено", reply_markup=origin_keybord)
+    await message.answer(text="🚫Действие отменено🚫", reply_markup=origin_keybord)
 
 
 @user_router.message(F.text == "Задать дату-время")
@@ -64,14 +64,14 @@ async def cancel_cal_date(message: Message):
 
 @user_router.callback_query(FSMfill.choosing_date, simple_cal_callback.filter())
 async def chose_date(
-    callback_query: CallbackQuery, callback_data: dict, state: FSMContext
+        callback_query: CallbackQuery, callback_data: dict, state: FSMContext
 ):
     selected, selected_date = await SimpleCalendar().process_selection(
         callback_query, callback_data
     )
     if selected:
         await callback_query.message.answer(
-            f'Вы выбрали {selected_date.strftime("%d/%m/%Y")}\nТеперь укажите время в формате HH:MM'
+            f'Вы выбрали {selected_date.strftime("%d/%m/%Y")}\nТеперь укажите время в формате HH:MM🕑'
         )
         selected_date = str(selected_date).split("-")
         other = selected_date[-1].split()
@@ -106,7 +106,7 @@ async def cancel_cal_time(message: Message):
 )
 async def choose_func(message: Message, state: FSMContext):
     if message.text == "Записать напоминалку":
-        await message.answer("Запишите текст напоминалки")
+        await message.answer("✒Запишите текст напоминалки📒")
         await state.set_state(FSMfill.choosing_task)
 
     elif message.text == "Удалить напоминалку":
@@ -128,13 +128,13 @@ async def choose_func(message: Message, state: FSMContext):
                 sch_datetime=time_for_sheduler, user_id=message.from_user.id
             )
             await message.answer(
-                "Напоминалка успешна удалена!", reply_markup=origin_keybord
+                "✅Напоминалка успешна удалена!✅", reply_markup=origin_keybord
             )
             await state.clear()
         except Exception as err:
             logging.error(err, exc_info=True)
             await message.answer(
-                "Упс... Что-то пошло не так.\nВидимо на эту дату ничего не записано",
+                "😱Упс... Что-то пошло не так😱\nВидимо на эту дату ничего не записано",
                 reply_markup=origin_keybord,
             )
             await state.clear()
@@ -173,7 +173,7 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
         ).id,
     )
     await message.answer(
-        "Напоминалка успешно записана!\nЯ отправлю вам уведомление как только наступит время",
+        "✅Напоминалка успешно записана!\nЯ отправлю вам уведомление как только наступит время✅",
         reply_markup=origin_keybord,
     )
     await state.clear()
