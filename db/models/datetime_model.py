@@ -12,7 +12,6 @@ class ScheduleDateTime(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     sch_datetime: Mapped[datetime] = mapped_column(nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.user_id'))
-    reminder_text: Mapped[str] = mapped_column(nullable=False)
     job_id: Mapped[str] = mapped_column(nullable=False)
 
     user = relationship('Users', back_populates="schedule_datetime")

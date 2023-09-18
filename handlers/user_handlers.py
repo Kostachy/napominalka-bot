@@ -101,7 +101,7 @@ async def cancel_cal_time(message: Message):
 @user_router.message(
     FSMfill.choosing_func,
     F.text.in_(
-        ["Записать напоминалку", "Удалить напоминалку", "Редактировать напоминалку"]
+        ["Записать напоминалку", "Удалить напоминалку"]
     ),
 )
 async def choose_func(message: Message, state: FSMContext):
@@ -161,7 +161,6 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
     await DatetimeCRUD.add(
         sch_datetime=time_for_sheduler,
         user_id=message.from_user.id,
-        reminder_text=user_data["tasks"],
         job_id=sched.add_job(
             func=send_some_message,
             trigger="date",

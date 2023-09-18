@@ -1,7 +1,5 @@
 FROM python:3.10
 
-RUN mkdir /napominalka_bot
-
 WORKDIR /napominalka_bot
 
 COPY requirements.txt .
