@@ -173,7 +173,7 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
         ).id,
     )
     await message.answer(
-        "✅Напоминалка успешно записана!\nЯ отправлю вам уведомление как только наступит время✅",
+        "✅Напоминалка успешно записана!✅\nЯ отправлю вам уведомление как только наступит время",
         reply_markup=origin_keybord,
     )
     await state.clear()
