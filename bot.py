@@ -34,7 +34,6 @@ async def main():
 
     session = AiohttpSession()
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML", session=session)
-    # app = web.Application()
 
     dp = Dispatcher(storage=RedisStorage(redis=redis))
     dp.include_router(user_router)

@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime, timedelta
 from typing import Union
@@ -96,7 +97,8 @@ async def cancel_cal_time(message: Message):
     await message.answer("Пожалуйста запишите время в формате HH:MM")
 
 
-@user_router.message(FSMfill.choosing_func, F.text == 'Записать напоминалку' or F.text == 'Удалить напоминалку' or F.text == 'Редактировать напоминалку')
+@user_router.message(FSMfill.choosing_func,
+                     F.text.in_(['Записать напоминалку', 'Удалить напоминалку', 'Редактировать напоминалку']))
 async def choose_func(message: Message, state: FSMContext):
     if message.text == 'Записать напоминалку':
         await message.answer('Запишите текст напоминалки')
@@ -111,13 +113,17 @@ async def choose_func(message: Message, state: FSMContext):
         ) + timedelta(
             hours=datetime_date["selected_time"][0], minutes=datetime_date["selected_time"][1]
         )
-        job_id = await DatetimeCRUD.get_job_id(sch_datetime=time_for_sheduler, user_id=message.from_user.id)
-        sched.remove_job(job_id[0])
-        await message.answer('Напоминалка успешна удалена!', reply_markup=origin_keybord)
-        await state.clear()
-
-    elif message.text == 'Редактировать напоминалку':
-        pass
+        try:
+            job_id = await DatetimeCRUD.get_job_id(sch_datetime=time_for_sheduler, user_id=message.from_user.id)
+            sched.remove_job(job_id[0])
+            await DatetimeCRUD.delete(sch_datetime=time_for_sheduler, user_id=message.from_user.id)
+            await message.answer('Напоминалка успешна удалена!', reply_markup=origin_keybord)
+            await state.clear()
+        except Exception as err:
+            logging.error(err, exc_info=True)
+            await message.answer('Упс... Что-то пошло не так.\nВидимо на эту дату ничего не записано',
+                                 reply_markup=origin_keybord)
+            await state.clear()
 
 
 @user_router.message(FSMfill.choosing_func)
@@ -154,7 +160,7 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
         ).id,
     )
     await message.answer(
-        "Напоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время",
+        "Напоминалка успешно записана!\nЯ отправлю вам уведомление как только наступит время",
         reply_markup=origin_keybord
     )
     await state.clear()
