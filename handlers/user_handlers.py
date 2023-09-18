@@ -64,7 +64,7 @@ async def cancel_cal_date(message: Message):
 
 @user_router.callback_query(FSMfill.choosing_date, simple_cal_callback.filter())
 async def chose_date(
-        callback_query: CallbackQuery, callback_data: dict, state: FSMContext
+    callback_query: CallbackQuery, callback_data: dict, state: FSMContext
 ):
     selected, selected_date = await SimpleCalendar().process_selection(
         callback_query, callback_data
@@ -83,7 +83,8 @@ async def chose_date(
 
 
 @user_router.message(
-    FSMfill.choosing_time, lambda message: re.match(r"\d\d:\d\d", message.text)
+    FSMfill.choosing_time,
+    lambda message: re.match(r"\d\d:\d\d", message.text)
 )
 async def chose_time(message: Message, state: FSMContext):
     selected_time = [int(i) for i in message.text.split(":")]
@@ -97,38 +98,51 @@ async def cancel_cal_time(message: Message):
     await message.answer("Пожалуйста запишите время в формате HH:MM")
 
 
-@user_router.message(FSMfill.choosing_func,
-                     F.text.in_(['Записать напоминалку', 'Удалить напоминалку', 'Редактировать напоминалку']))
+@user_router.message(
+    FSMfill.choosing_func,
+    F.text.in_(
+        ["Записать напоминалку", "Удалить напоминалку", "Редактировать напоминалку"]
+    ),
+)
 async def choose_func(message: Message, state: FSMContext):
-    if message.text == 'Записать напоминалку':
-        await message.answer('Запишите текст напоминалки')
+    if message.text == "Записать напоминалку":
+        await message.answer("Запишите текст напоминалки")
         await state.set_state(FSMfill.choosing_task)
 
-    elif message.text == 'Удалить напоминалку':
+    elif message.text == "Удалить напоминалку":
         datetime_date = await state.get_data()
         time_for_sheduler = datetime(
             year=datetime_date["selected_date"][0],
             month=datetime_date["selected_date"][1],
             day=datetime_date["selected_date"][2],
         ) + timedelta(
-            hours=datetime_date["selected_time"][0], minutes=datetime_date["selected_time"][1]
+            hours=datetime_date["selected_time"][0],
+            minutes=datetime_date["selected_time"][1],
         )
         try:
-            job_id = await DatetimeCRUD.get_job_id(sch_datetime=time_for_sheduler, user_id=message.from_user.id)
+            job_id = await DatetimeCRUD.get_job_id(
+                sch_datetime=time_for_sheduler, user_id=message.from_user.id
+            )
             sched.remove_job(job_id[0])
-            await DatetimeCRUD.delete(sch_datetime=time_for_sheduler, user_id=message.from_user.id)
-            await message.answer('Напоминалка успешна удалена!', reply_markup=origin_keybord)
+            await DatetimeCRUD.delete(
+                sch_datetime=time_for_sheduler, user_id=message.from_user.id
+            )
+            await message.answer(
+                "Напоминалка успешна удалена!", reply_markup=origin_keybord
+            )
             await state.clear()
         except Exception as err:
             logging.error(err, exc_info=True)
-            await message.answer('Упс... Что-то пошло не так.\nВидимо на эту дату ничего не записано',
-                                 reply_markup=origin_keybord)
+            await message.answer(
+                "Упс... Что-то пошло не так.\nВидимо на эту дату ничего не записано",
+                reply_markup=origin_keybord,
+            )
             await state.clear()
 
 
 @user_router.message(FSMfill.choosing_func)
 async def cancel_cal_func(message: Message):
-    await message.answer('Пожалуйста выберите доступное действие из меню')
+    await message.answer("Пожалуйста выберите доступное действие из меню")
 
 
 @user_router.message(FSMfill.choosing_task, F.text)
@@ -161,7 +175,7 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
     )
     await message.answer(
         "Напоминалка успешно записана!\nЯ отправлю вам уведомление как только наступит время",
-        reply_markup=origin_keybord
+        reply_markup=origin_keybord,
     )
     await state.clear()
 
