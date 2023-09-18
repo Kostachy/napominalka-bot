@@ -1,7 +1,5 @@
 # NapominalkaBot
 
-Telegram bot with aiogram
-
 Tech stack:
 
 * Python 3.10
