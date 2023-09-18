@@ -6,3 +6,6 @@ Tech stack:
 *  PostgreSQL + SQLAlchemy + asyncpg driver + alembic
 *  Redis
 *  Docker + docker-compose to ease deployment and development
+
+
+# How to use 

@@ -15,8 +15,10 @@ logger = logging.getLogger(__name__)
 
 
 async def on_startup(bot: Bot) -> None:
-    await bot.set_webhook(f"{config.webhook_config.BASE_WEBHOOK_URL}{config.webhook_config.WEBHOOK_PATH}",
-                          secret_token=config.webhook_config.WEBHOOK_SECRET)
+    await bot.set_webhook(
+        f"{config.webhook_config.BASE_WEBHOOK_URL}{config.webhook_config.WEBHOOK_PATH}",
+        secret_token=config.webhook_config.WEBHOOK_SECRET,
+    )
 
 
 async def main():
@@ -24,12 +26,14 @@ async def main():
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     )
-    redis: Redis = Redis(host=config.redis_db.redis_host,
-                         port=config.redis_db.redis_port,
-                         password=config.redis_db.redis_pass)
+    redis: Redis = Redis(
+        host=config.redis_db.redis_host,
+        port=config.redis_db.redis_port,
+        password=config.redis_db.redis_pass,
+    )
 
     session = AiohttpSession()
-    bot: Bot = Bot(token=config.tg_bot.token, parse_mode='HTML', session=session)
+    bot: Bot = Bot(token=config.tg_bot.token, parse_mode="HTML", session=session)
     # app = web.Application()
 
     dp = Dispatcher(storage=RedisStorage(redis=redis))

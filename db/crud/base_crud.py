@@ -21,14 +21,14 @@ class BaseCRUD:
             return result.one_or_none()
 
     @classmethod
-    async def update_user(cls, **data):
+    async def update(cls, **data):
         async with async_session_maker() as session:
             query = update(cls.model).filter_by(**data)
             await session.execute(query)
             await session.commit()
 
     @classmethod
-    async def delete_user(cls, **filter_by):
+    async def delete(cls, **filter_by):
         async with async_session_maker() as session:
             query = delete(cls.model).filter_by(**filter_by)
             await session.execute(query)

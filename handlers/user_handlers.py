@@ -13,7 +13,7 @@ from sheduler import sched
 
 # from middlewares.mid_for_scheduler import SchedulerMiddleware
 from utils import FSMfill
-from utils.keybords.user_keybord import default_keybord
+from utils.keybords.user_keybord import default_keybord, origin_keybord
 from utils.lexicon import HELP_DESCRIPTION, START_DESCRIPTION
 
 user_router = Router()
@@ -27,7 +27,7 @@ async def send_some_message(bot: Bot, message: str, chat_id: Union[int, str]):
 @user_router.message(CommandStart())
 async def get_started(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer(START_DESCRIPTION, reply_markup=default_keybord)
+    await message.answer(START_DESCRIPTION, reply_markup=origin_keybord)
     if not await UserCRUD.read_user(message.from_user.id):
         await UserCRUD.add(
             user_id=message.from_user.id, username=message.from_user.username
@@ -37,17 +37,17 @@ async def get_started(message: Message, state: FSMContext):
 @user_router.message(Command("help"))
 async def get_helped(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer(HELP_DESCRIPTION, reply_markup=default_keybord)
+    await message.answer(HELP_DESCRIPTION, reply_markup=origin_keybord)
 
 
 @user_router.message(Command(commands=["cancel"]))
 @user_router.message(F.text.lower() == "отмена")
 async def cmd_cancel(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer(text="Действие отменено", reply_markup=default_keybord)
+    await message.answer(text="Действие отменено", reply_markup=origin_keybord)
 
 
-@user_router.message(F.text == "Записать напоминалку")
+@user_router.message(F.text == "Задать дату-время")
 async def write_napominalka(message: Message, state: FSMContext):
     await message.reply(
         "Пожалуйста выберите дату: ",
@@ -63,7 +63,7 @@ async def cancel_cal_date(message: Message):
 
 @user_router.callback_query(FSMfill.choosing_date, simple_cal_callback.filter())
 async def chose_date(
-    callback_query: CallbackQuery, callback_data: dict, state: FSMContext
+        callback_query: CallbackQuery, callback_data: dict, state: FSMContext
 ):
     selected, selected_date = await SimpleCalendar().process_selection(
         callback_query, callback_data
@@ -87,13 +87,42 @@ async def chose_date(
 async def chose_time(message: Message, state: FSMContext):
     selected_time = [int(i) for i in message.text.split(":")]
     await state.update_data(selected_time=selected_time)
-    await message.answer("Теперь сделайте свою заметку")
-    await state.set_state(FSMfill.choosing_task)
+    await message.answer("Теперь выберите действие", reply_markup=default_keybord)
+    await state.set_state(FSMfill.choosing_func)
 
 
 @user_router.message(FSMfill.choosing_time)
 async def cancel_cal_time(message: Message):
     await message.answer("Пожалуйста запишите время в формате HH:MM")
+
+
+@user_router.message(FSMfill.choosing_func, F.text == 'Записать напоминалку' or F.text == 'Удалить напоминалку' or F.text == 'Редактировать напоминалку')
+async def choose_func(message: Message, state: FSMContext):
+    if message.text == 'Записать напоминалку':
+        await message.answer('Запишите текст напоминалки')
+        await state.set_state(FSMfill.choosing_task)
+
+    elif message.text == 'Удалить напоминалку':
+        datetime_date = await state.get_data()
+        time_for_sheduler = datetime(
+            year=datetime_date["selected_date"][0],
+            month=datetime_date["selected_date"][1],
+            day=datetime_date["selected_date"][2],
+        ) + timedelta(
+            hours=datetime_date["selected_time"][0], minutes=datetime_date["selected_time"][1]
+        )
+        job_id = await DatetimeCRUD.get_job_id(sch_datetime=time_for_sheduler, user_id=message.from_user.id)
+        sched.remove_job(job_id[0])
+        await message.answer('Напоминалка успешна удалена!', reply_markup=origin_keybord)
+        await state.clear()
+
+    elif message.text == 'Редактировать напоминалку':
+        pass
+
+
+@user_router.message(FSMfill.choosing_func)
+async def cancel_cal_func(message: Message):
+    await message.answer('Пожалуйста выберите доступное действие из меню')
 
 
 @user_router.message(FSMfill.choosing_task, F.text)
@@ -125,11 +154,12 @@ async def write_text_napomninalki(message: Message, state: FSMContext, bot: Bot)
         ).id,
     )
     await message.answer(
-        "Напоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время"
+        "Напоминалка успешно записана\nЯ отправлю вам уведомление как только наступит время",
+        reply_markup=origin_keybord
     )
     await state.clear()
 
 
 @user_router.message()
 async def other_messages(message: Message):
-    await message.answer("Выберите кнопку из меню", reply_markup=default_keybord)
+    await message.answer("Выберите кнопку из меню", reply_markup=origin_keybord)
