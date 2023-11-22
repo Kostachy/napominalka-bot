@@ -8,6 +8,7 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_applicati
 from aiohttp import web
 
 from config.bot_config import config
+from middlewares.throttling import ThrottlingMiddleware
 from handlers.user_handlers import user_router
 from sheduler import sched
 
@@ -37,6 +38,9 @@ async def main():
 
     dp = Dispatcher(storage=RedisStorage(redis=redis))
     dp.include_router(user_router)
+    # Регистрация мидлвари для троттлинга
+    dp.message.middleware(ThrottlingMiddleware(throttle_time=1))
+
     sched.start()
 
     if config.webhook_config.USE_WEBHOOK:
