@@ -12,7 +12,6 @@ from aiogram.types import CallbackQuery, Message
 from db.crud import DatetimeCRUD, UserCRUD
 from sheduler import sched
 
-# from middlewares.mid_for_scheduler import SchedulerMiddleware
 from utils import FSMfill
 from keybords import default_keybord, origin_keybord
 from utils.lexicon import HELP_DESCRIPTION, START_DESCRIPTION
