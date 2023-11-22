@@ -14,7 +14,7 @@ from sheduler import sched
 
 # from middlewares.mid_for_scheduler import SchedulerMiddleware
 from utils import FSMfill
-from utils.keybords.user_keybord import default_keybord, origin_keybord
+from keybords import default_keybord, origin_keybord
 from utils.lexicon import HELP_DESCRIPTION, START_DESCRIPTION
 
 user_router = Router()

@@ -11,10 +11,11 @@ Tech stack:
 ### How to use
 
 1. git clone `https://github.com/Kostachy/NapominalkaBot.git`
-2. Navigate inside project root folder:
+2. Navigate inside project root folder and run several commands:
    - `cd NapominalkaBot`
    - `python -m venv venv`
-   - `./venv/Scripts/activate`
+   - `./venv/Scripts/activate` for windows
+   - `source .venv/Scripts/activate` for linux
 3. Run `pip install -r requirements.txt`
 4. Create db
 5. Run `alembic upgrade head`
