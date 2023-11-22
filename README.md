@@ -1,4 +1,5 @@
 # NapominalkaBot
+Telegram bot that sends mentions at any given time
 
 Tech stack:
 
