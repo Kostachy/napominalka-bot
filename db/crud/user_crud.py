@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from db.crud.base_crud import BaseCRUD
-from db.database import async_session_maker
+from db.database import fetch_one, fetch_all
 from db.models import Users
 
 
@@ -10,14 +10,10 @@ class UserCRUD(BaseCRUD):
 
     @classmethod
     async def read_user(cls, user_id: int):
-        async with async_session_maker() as session:
-            query = select(Users.user_id).filter_by(user_id=user_id)
-            result = await session.execute(query)
-            return result.one_or_none()
+        query = select(Users.user_id).filter_by(user_id=user_id)
+        return await fetch_one(query)
 
     @classmethod
     async def get_all_by_user_id(cls):
-        async with async_session_maker() as session:
-            query = select(Users.user_id)
-            result = await session.execute(query)
-            return result.all()
+        query = select(Users.user_id)
+        return await fetch_all(query)
