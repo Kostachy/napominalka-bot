@@ -9,7 +9,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
-    image: redis:7.0-alpine
+    image: redis:7
     container_name: bot_redis
     volumes:
       - redis_data:/usr/local/etc/redis
