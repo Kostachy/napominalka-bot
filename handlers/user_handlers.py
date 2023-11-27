@@ -83,7 +83,7 @@ async def chose_date(
 
 @user_router.message(
     FSMfill.choosing_time,
-    lambda message: re.match(r"\d\d:\d\d", message.text)
+    lambda message: re.match(r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$", message.text)
 )
 async def chose_time(message: Message, state: FSMContext):
     selected_time = [int(i) for i in message.text.split(":")]
@@ -94,7 +94,7 @@ async def chose_time(message: Message, state: FSMContext):
 
 @user_router.message(FSMfill.choosing_time)
 async def cancel_cal_time(message: Message):
-    await message.answer("Пожалуйста запишите время в формате HH:MM")
+    await message.answer("Вы указали неверный формат времени.\nПожалуйста запишите время в формате HH:MM")
 
 
 @user_router.message(
