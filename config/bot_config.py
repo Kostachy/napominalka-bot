@@ -6,6 +6,7 @@ from environs import Env
 @dataclass
 class TgBot:
     token: str
+    mode: str
 
 
 @dataclass
@@ -46,7 +47,8 @@ def load_config(path: str | None = None) -> Config:
     env = Env()
     env.read_env(path)
     return Config(
-        tg_bot=TgBot(token=env("BOT_TOKEN")),
+        tg_bot=TgBot(token=env("BOT_TOKEN"),
+                     mode=env("MODE")),
         postgres=PostgresConfig(
             db_name=env("DB_NAME"),
             db_host=env("DB_HOST"),
