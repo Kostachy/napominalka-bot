@@ -15,7 +15,7 @@ from sqlalchemy.orm import DeclarativeBase
 from config.bot_config import config
 
 if config.tg_bot.mode == "TEST":
-    DATABASE_URL = f"postgresql+asyncpg://{config.postgres.db_user}:{config.postgres.db_pass}@{config.postgres.db_host}:{config.postgres.db_port}/napominalka_db_test"
+    DATABASE_URL = f"postgresql+asyncpg://{config.postgres.db_user}:{config.postgres.db_pass}@{config.postgres.db_host}:{config.postgres.db_port}/{config.postgres.db_name_test}"
     DATABASE_PARAMS = {'poolclass': NullPool}
 else:
     DATABASE_URL = f"postgresql+asyncpg://{config.postgres.db_user}:{config.postgres.db_pass}@{config.postgres.db_host}:{config.postgres.db_port}/{config.postgres.db_name}"

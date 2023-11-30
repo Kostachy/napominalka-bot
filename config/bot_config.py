@@ -18,6 +18,7 @@ class PostgresConfig:
     db_user: str
     db_pass: str
     db_name: str
+    db_name_test: str
 
 
 @dataclass
@@ -53,6 +54,7 @@ def load_config(path: str | None = None) -> Config:
                      mode=env("MODE")),
         postgres=PostgresConfig(
             db_name=env("DB_NAME"),
+            db_name_test=env("DB_NAME_TEST"),
             db_host=env("DB_HOST"),
             db_port=env("DB_PORT"),
             db_user=env("DB_USER"),
