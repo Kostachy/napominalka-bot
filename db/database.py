@@ -6,6 +6,7 @@ from sqlalchemy import (
     Update,
     Result,
     Delete,
+    NullPool
 )
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
@@ -13,10 +14,15 @@ from sqlalchemy.orm import DeclarativeBase
 
 from config.bot_config import config
 
+if config.tg_bot.mode == "TEST":
+    DATABASE_URL = f"postgresql+asyncpg://{config.postgres.db_user}:{config.postgres.db_pass}@{config.postgres.db_host}:{config.postgres.db_port}/napominalka_db_test"
+    DATABASE_PARAMS = {'poolclass': NullPool}
+else:
+    DATABASE_URL = f"postgresql+asyncpg://{config.postgres.db_user}:{config.postgres.db_pass}@{config.postgres.db_host}:{config.postgres.db_port}/{config.postgres.db_name}"
+    DATABASE_PARAMS = {}
 
-DATABASE_URL = f"postgresql+asyncpg://{config.postgres.db_user}:{config.postgres.db_pass}@{config.postgres.db_host}:{config.postgres.db_port}/{config.postgres.db_name}"
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 
