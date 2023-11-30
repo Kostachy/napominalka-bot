@@ -5,14 +5,12 @@ from config.bot_config import config
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture(scope="session", autouse=True)
 async def setup_db():
     assert config.tg_bot.mode == 'TEST'
 
     async with engine.begin() as conn:
-        # Удаление всех заданных нами таблиц из БД
         await conn.run_sync(Base.metadata.drop_all)
-        # Добавление всех заданных нами таблиц из БД
         await conn.run_sync(Base.metadata.create_all)
 
 
